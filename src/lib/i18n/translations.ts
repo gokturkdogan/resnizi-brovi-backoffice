@@ -15,7 +15,7 @@ const en = {
     wrongPassword: 'Wrong password',
   },
   dashboard: {
-    title: 'QR Analytics',
+    title: 'SALT Admin Panel',
     subtitle: 'Scans, trends and platform analytics',
     refresh: 'Refresh',
     refreshing: 'Refreshing…',
@@ -104,7 +104,7 @@ const tr = {
     wrongPassword: 'Hatalı şifre',
   },
   dashboard: {
-    title: 'QR Analitik',
+    title: 'SALT Yönetim Paneli',
     subtitle: 'Taramalar, trendler ve platform analitiği',
     refresh: 'Yenile',
     refreshing: 'Yenileniyor…',
@@ -193,7 +193,7 @@ const ru = {
     wrongPassword: 'Неверный пароль',
   },
   dashboard: {
-    title: 'QR Аналитика',
+    title: 'SALT Панель управления',
     subtitle: 'Сканирования, тренды и платформенная аналитика',
     refresh: 'Обновить',
     refreshing: 'Обновление…',
@@ -216,8 +216,8 @@ const ru = {
     partial: 'Некоторые проверки требуют внимания',
     operational: 'Работает',
     degraded: 'Требует внимания',
-    liveCheck: 'Проверка в реальном времени',
-    monitored: 'Мониторинг',
+    liveCheck: 'Онлайн',
+    monitored: 'Статус',
     online: 'активно',
     lastCheck: 'Последняя проверка',
     responseTime: 'Время отклика',

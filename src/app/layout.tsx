@@ -9,7 +9,7 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: 'Beauty Space — Backoffice',
+  title: 'SALT Yönetim Paneli',
   description: 'Yönetim paneli',
   robots: { index: false, follow: false },
 };

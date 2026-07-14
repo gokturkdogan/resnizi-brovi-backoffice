@@ -53,43 +53,12 @@ export function SystemHealthDisplay({ items, allHealthy }: SystemHealthBaseProps
 
   return (
     <section className="neon-card fade-up rounded-2xl px-3 py-2.5 md:px-4 md:py-3">
-      <div className="flex items-center gap-2 md:gap-3">
-        <div className="flex shrink-0 items-center gap-2 border-r border-[var(--line)] pr-2 md:pr-3">
+      <div className="flex items-center justify-between gap-3">
+        <div className="flex min-w-0 items-center gap-2">
           <IconActivity size={15} className="shrink-0 text-[var(--accent)]" />
-          <span className="whitespace-nowrap text-[11px] font-semibold text-[var(--ink)] md:text-xs">
+          <span className="truncate text-[11px] font-semibold text-[var(--ink)] md:text-xs">
             {t.health.title}
           </span>
-        </div>
-
-        <div className="flex min-w-0 flex-1 items-stretch gap-1.5 overflow-x-auto md:gap-2">
-          {items.map((item) => {
-            const ItemIcon = healthItemIcon(item.id);
-            const isHealthy = item.status === 'healthy';
-
-            return (
-              <div
-                key={item.id}
-                title={itemLabel(item.id, labels)}
-                className={`flex min-w-0 flex-1 items-center justify-center gap-1.5 rounded-lg border px-2 py-1.5 ${
-                  isHealthy
-                    ? 'border-[var(--line)] bg-[rgba(255,255,255,0.02)]'
-                    : 'border-amber-500/25 bg-amber-500/5'
-                }`}
-              >
-                <div className="relative flex h-6 w-6 shrink-0 items-center justify-center">
-                  <ItemIcon size={14} className="text-[var(--accent)]" />
-                  <HealthDot
-                    status={item.status}
-                    size="sm"
-                    className="absolute -right-0.5 -top-0.5"
-                  />
-                </div>
-                <span className="hidden min-w-0 truncate text-[10px] font-medium text-[var(--ink)] sm:inline">
-                  {itemLabel(item.id, labels)}
-                </span>
-              </div>
-            );
-          })}
         </div>
 
         <div
@@ -100,13 +69,44 @@ export function SystemHealthDisplay({ items, allHealthy }: SystemHealthBaseProps
           }`}
         >
           <HealthDot status={allHealthy ? 'healthy' : 'degraded'} size="sm" />
-          <span className="hidden md:inline">
+          <span className="hidden sm:inline">
             {allHealthy ? t.health.allOperational : t.health.partial}
           </span>
-          <span className="tabular-nums text-[var(--muted)] md:ml-0.5">
+          <span className="tabular-nums text-[var(--muted)] sm:ml-0.5">
             <span className="font-semibold text-[var(--ink)]">{healthyCount}</span>/{items.length}
           </span>
         </div>
+      </div>
+
+      <div className="mt-2.5 flex items-stretch gap-1.5 md:mt-3 md:gap-2">
+        {items.map((item) => {
+          const ItemIcon = healthItemIcon(item.id);
+          const isHealthy = item.status === 'healthy';
+
+          return (
+            <div
+              key={item.id}
+              title={itemLabel(item.id, labels)}
+              className={`flex min-w-0 flex-1 items-center justify-center gap-1.5 rounded-lg border px-2 py-1.5 ${
+                isHealthy
+                  ? 'border-[var(--line)] bg-[rgba(255,255,255,0.02)]'
+                  : 'border-amber-500/25 bg-amber-500/5'
+              }`}
+            >
+              <div className="relative flex h-6 w-6 shrink-0 items-center justify-center">
+                <ItemIcon size={14} className="text-[var(--accent)]" />
+                <HealthDot
+                  status={item.status}
+                  size="sm"
+                  className="absolute -right-0.5 -top-0.5"
+                />
+              </div>
+              <span className="hidden min-w-0 truncate text-[10px] font-medium text-[var(--ink)] sm:inline">
+                {itemLabel(item.id, labels)}
+              </span>
+            </div>
+          );
+        })}
       </div>
     </section>
   );

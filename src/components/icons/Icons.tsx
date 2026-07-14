@@ -221,6 +221,100 @@ export function IconChartEmpty({ size, className, ...props }: IconProps) {
   );
 }
 
+export function SaltAdminLogo({
+  size = 32,
+  className,
+  ...props
+}: IconProps) {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width={size}
+      height={size}
+      viewBox="0 0 32 32"
+      fill="none"
+      className={className}
+      aria-hidden={props['aria-label'] ? undefined : true}
+      {...props}
+    >
+      <rect
+        x="2.5"
+        y="2.5"
+        width="27"
+        height="27"
+        rx="8"
+        stroke="currentColor"
+        strokeWidth="1.5"
+      />
+      <rect
+        x="6"
+        y="6"
+        width="10"
+        height="10"
+        rx="2.5"
+        fill="currentColor"
+        fillOpacity="0.18"
+        stroke="currentColor"
+        strokeWidth="1.25"
+      />
+      <path
+        d="M8.5 13.5 10.2 11.2 11.8 12.5 14.8 9"
+        stroke="currentColor"
+        strokeWidth="1.35"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <rect
+        x="18"
+        y="6"
+        width="8"
+        height="5"
+        rx="2"
+        stroke="currentColor"
+        strokeWidth="1.25"
+      />
+      <path
+        d="M19.5 8.2h5M19.5 9.8h3.2"
+        stroke="currentColor"
+        strokeWidth="1.1"
+        strokeLinecap="round"
+        opacity="0.55"
+      />
+      <rect
+        x="6"
+        y="18"
+        width="10"
+        height="8"
+        rx="2"
+        stroke="currentColor"
+        strokeWidth="1.25"
+      />
+      <path
+        d="M8.5 22.5h5M8.5 24h7"
+        stroke="currentColor"
+        strokeWidth="1.1"
+        strokeLinecap="round"
+        opacity="0.55"
+      />
+      <rect
+        x="18"
+        y="13"
+        width="8"
+        height="13"
+        rx="2"
+        stroke="currentColor"
+        strokeWidth="1.25"
+      />
+      <path
+        d="M20 21.5v-5.5M22 23v-7.5M24 19.5v-3"
+        stroke="currentColor"
+        strokeWidth="1.35"
+        strokeLinecap="round"
+      />
+    </svg>
+  );
+}
+
 export function chartKindIcon(kind: 'country' | 'os' | 'browser' | 'device') {
   switch (kind) {
     case 'country':

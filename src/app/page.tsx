@@ -4,11 +4,12 @@ import { useCallback, useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useLocale } from '@/components/i18n/LocaleProvider';
 import { AppMenu } from '@/components/layout/AppMenu';
+import { BrandLogo } from '@/components/layout/BrandLogo';
 import { DonutChart } from '@/components/dashboard/DonutChart';
 import { SystemHealthDisplay } from '@/components/dashboard/SystemHealth';
 import { toChartItems } from '@/components/dashboard/chart-utils';
 import { TrendChart } from '@/components/dashboard/TrendChart';
-import { IconClock, IconPeak, IconQr, IconRefresh, IconTrend, IconAlert } from '@/components/icons/Icons';
+import { IconClock, IconPeak, IconRefresh, IconTrend, IconAlert } from '@/components/icons/Icons';
 import type { PlatformBreakdown, ScanStats, TrendPoint } from '@/lib/scan-store';
 import type { SystemHealth as SystemHealthData } from '@/lib/system-health';
 import { RANGE_IDS, type StatsRange } from '@/lib/stats-range';
@@ -77,16 +78,11 @@ export default function DashboardPage() {
     <div className="min-h-screen">
       <header className="sticky top-0 z-20 border-b border-[var(--line)] bg-[rgba(12,8,11,0.92)] backdrop-blur-md">
         <div className="mx-auto flex max-w-7xl items-start justify-between gap-4 px-5 py-4">
-          <div className="min-w-0 pr-2">
-            <p className="flex items-center gap-2 text-[10px] font-semibold uppercase tracking-[0.32em] text-[var(--accent)]">
-              <IconQr size={14} className="text-[var(--accent)]" />
-              Beauty Space
-            </p>
-            <h1 className="text-xl font-semibold tracking-tight text-[var(--ink)] md:text-2xl">
-              {t.dashboard.title}
-            </h1>
-            <p className="mt-1 text-sm text-[var(--muted)]">{t.dashboard.subtitle}</p>
-          </div>
+          <BrandLogo
+            showTitle
+            title={t.dashboard.title}
+            subtitle={t.dashboard.subtitle}
+          />
 
           <div className="flex shrink-0 items-center gap-2">
             <button

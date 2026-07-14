@@ -9,6 +9,7 @@ import {
   useState,
 } from 'react';
 import {
+  DEFAULT_LOCALE,
   isLocale,
   LOCALE_STORAGE_KEY,
   localeToIntl,
@@ -26,7 +27,7 @@ type LocaleContextValue = {
 const LocaleContext = createContext<LocaleContextValue | null>(null);
 
 export function LocaleProvider({ children }: { children: React.ReactNode }) {
-  const [locale, setLocaleState] = useState<Locale>('ru');
+  const [locale, setLocaleState] = useState<Locale>(DEFAULT_LOCALE);
   const [ready, setReady] = useState(false);
 
   useEffect(() => {

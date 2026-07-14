@@ -1,6 +1,8 @@
 export type Locale = 'en' | 'tr' | 'ru';
 
-export const LOCALES: Locale[] = ['en', 'tr', 'ru'];
+export const DEFAULT_LOCALE: Locale = 'ru';
+
+export const LOCALES: Locale[] = ['ru', 'tr', 'en'];
 
 export const LOCALE_LABELS: Record<Locale, string> = {
   en: 'English',

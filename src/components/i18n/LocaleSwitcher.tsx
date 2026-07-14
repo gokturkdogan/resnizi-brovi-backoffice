@@ -6,9 +6,9 @@ import { IconLanguages } from '@/components/icons/Icons';
 import type { Locale } from '@/lib/i18n/locale';
 
 const OPTIONS: Array<{ id: Locale; label: string }> = [
+  { id: 'ru', label: 'RU' },
   { id: 'tr', label: 'TR' },
   { id: 'en', label: 'EN' },
-  { id: 'ru', label: 'RU' },
 ];
 
 type LocaleSwitcherProps = {

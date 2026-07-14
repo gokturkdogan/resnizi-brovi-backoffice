@@ -41,10 +41,6 @@ export default function LoginForm() {
 
   return (
     <main className="flex min-h-screen items-center justify-center px-5 py-10">
-      <div className="absolute right-5 top-5 w-[min(100%,14rem)]">
-        <LanguageSwitcher />
-      </div>
-
       <div className="neon-card relative w-full max-w-sm rounded-2xl p-8">
         <div className="mb-6">
           <BrandLogo
@@ -86,6 +82,10 @@ export default function LoginForm() {
             {loading ? t.login.loading : t.login.submit}
           </button>
         </form>
+
+        <div className="mt-6 border-t border-[var(--line)] pt-5">
+          <LanguageSwitcher />
+        </div>
       </div>
     </main>
   );

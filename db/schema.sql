@@ -6,12 +6,14 @@ CREATE TABLE IF NOT EXISTS qr_scans (
   scanned_at  TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   os          TEXT,
   browser     TEXT,
-  device_type TEXT
+  device_type TEXT,
+  country     TEXT
 );
 
 ALTER TABLE qr_scans ADD COLUMN IF NOT EXISTS os TEXT;
 ALTER TABLE qr_scans ADD COLUMN IF NOT EXISTS browser TEXT;
 ALTER TABLE qr_scans ADD COLUMN IF NOT EXISTS device_type TEXT;
+ALTER TABLE qr_scans ADD COLUMN IF NOT EXISTS country TEXT;
 
 CREATE INDEX IF NOT EXISTS idx_qr_scans_scanned_at
   ON qr_scans (scanned_at DESC);
@@ -24,3 +26,6 @@ CREATE INDEX IF NOT EXISTS idx_qr_scans_browser
 
 CREATE INDEX IF NOT EXISTS idx_qr_scans_device_type
   ON qr_scans (device_type);
+
+CREATE INDEX IF NOT EXISTS idx_qr_scans_country
+  ON qr_scans (country);

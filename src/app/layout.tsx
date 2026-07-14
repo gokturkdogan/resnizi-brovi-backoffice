@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from 'next';
 import { Inter } from 'next/font/google';
+import { Providers } from './providers';
 import './globals.css';
 
 const inter = Inter({
@@ -25,8 +26,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="ru" className={`${inter.variable} h-full`}>
-      <body className="min-h-full">{children}</body>
+    <html lang="ru" className={`${inter.variable} h-full`} suppressHydrationWarning>
+      <body className="min-h-full">
+        <Providers>{children}</Providers>
+      </body>
     </html>
   );
 }

@@ -2,11 +2,14 @@
 
 import { FormEvent, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
+import { useLocale } from '@/components/i18n/LocaleProvider';
+import { LanguageSwitcher } from '@/components/i18n/LanguageSwitcher';
 
 export default function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const next = searchParams.get('next') || '/';
+  const { t } = useLocale();
 
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -26,7 +29,7 @@ export default function LoginForm() {
     setLoading(false);
 
     if (!res.ok) {
-      setError('Неверный пароль');
+      setError(t.login.wrongPassword);
       return;
     }
 
@@ -36,18 +39,22 @@ export default function LoginForm() {
 
   return (
     <main className="flex min-h-screen items-center justify-center px-5 py-10">
-      <div className="w-full max-w-sm border border-[var(--line)] p-8">
-        <p className="mb-2 text-center text-[11px] font-semibold uppercase tracking-[0.28em] text-[var(--muted)]">
+      <div className="absolute right-5 top-5 w-[min(100%,14rem)]">
+        <LanguageSwitcher />
+      </div>
+
+      <div className="neon-card relative w-full max-w-sm rounded-2xl p-8">
+        <p className="mb-2 text-center text-[10px] font-semibold uppercase tracking-[0.32em] text-[var(--accent)]">
           Beauty Space
         </p>
-        <h1 className="mb-6 text-center text-2xl font-semibold tracking-tight">
-          Backoffice
+        <h1 className="mb-6 text-center text-2xl font-semibold tracking-tight text-[var(--ink)]">
+          {t.login.title}
         </h1>
 
         <form onSubmit={onSubmit} className="space-y-4">
           <label className="block">
-            <span className="mb-2 block text-xs font-medium uppercase tracking-[0.14em] text-[var(--muted)]">
-              Пароль
+            <span className="mb-2 block text-[10px] font-semibold uppercase tracking-[0.14em] text-[var(--muted)]">
+              {t.login.password}
             </span>
             <input
               type="password"
@@ -55,12 +62,12 @@ export default function LoginForm() {
               onChange={(e) => setPassword(e.target.value)}
               autoComplete="current-password"
               required
-              className="w-full border border-[var(--line)] bg-white px-4 py-3 text-sm outline-none focus:border-black"
+              className="w-full rounded-xl border border-[var(--line)] bg-[var(--bg)] px-4 py-3 text-sm text-[var(--ink)] outline-none transition focus:border-[var(--accent)]"
             />
           </label>
 
           {error ? (
-            <p className="text-sm text-red-600" role="alert">
+            <p className="text-sm text-red-400" role="alert">
               {error}
             </p>
           ) : null}
@@ -68,9 +75,9 @@ export default function LoginForm() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-black px-4 py-3 text-xs font-semibold uppercase tracking-[0.16em] text-white disabled:opacity-60"
+            className="w-full rounded-xl bg-[var(--accent)] px-4 py-3 text-[10px] font-semibold uppercase tracking-[0.16em] text-[#1a0812] transition hover:opacity-90 disabled:opacity-60"
           >
-            {loading ? 'Вход…' : 'Войти'}
+            {loading ? t.login.loading : t.login.submit}
           </button>
         </form>
       </div>

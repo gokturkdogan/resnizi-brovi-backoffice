@@ -1,11 +1,14 @@
 @import "tailwindcss";
 
 :root {
-  --bg: #ffffff;
-  --ink: #000000;
-  --muted: #666666;
-  --line: rgba(0, 0, 0, 0.12);
-  --cream-3: #5c5c5c;
+  --bg: #0c080b;
+  --surface: #141016;
+  --ink: #f5eef2;
+  --muted: #9a8490;
+  --line: rgba(255, 255, 255, 0.08);
+  --accent: #e879a9;
+  --accent-soft: rgba(232, 121, 169, 0.12);
+  --shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
 }
 
 @theme inline {
@@ -14,9 +17,59 @@
   --font-sans: var(--font-inter);
 }
 
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 body {
   background: var(--bg);
   color: var(--ink);
   font-family: var(--font-inter), system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
+}
+
+.panel-card {
+  border: 1px solid var(--line);
+  background: var(--surface);
+  box-shadow: var(--shadow);
+  transition: border-color 0.2s ease;
+}
+
+.panel-card:hover {
+  border-color: rgba(232, 121, 169, 0.22);
+}
+
+.pill-active {
+  background: var(--accent-soft);
+  border: 1px solid rgba(232, 121, 169, 0.35);
+  color: var(--ink);
+}
+
+.fade-up {
+  animation: fade-up 0.35s ease-out both;
+}
+
+/* legacy alias */
+.neon-card {
+  border: 1px solid var(--line);
+  background: var(--surface);
+  box-shadow: var(--shadow);
+  transition: border-color 0.2s ease;
+}
+
+.neon-card:hover {
+  border-color: rgba(232, 121, 169, 0.22);
+}
+
+.neon-pill-active {
+  background: var(--accent-soft);
+  border: 1px solid rgba(232, 121, 169, 0.35);
+  color: var(--ink);
 }

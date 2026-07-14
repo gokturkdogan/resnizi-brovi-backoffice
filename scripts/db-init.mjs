@@ -16,13 +16,15 @@ await sql`
     scanned_at  TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     os          TEXT,
     browser     TEXT,
-    device_type TEXT
+    device_type TEXT,
+    country     TEXT
   )
 `;
 
 await sql`ALTER TABLE qr_scans ADD COLUMN IF NOT EXISTS os TEXT`;
 await sql`ALTER TABLE qr_scans ADD COLUMN IF NOT EXISTS browser TEXT`;
 await sql`ALTER TABLE qr_scans ADD COLUMN IF NOT EXISTS device_type TEXT`;
+await sql`ALTER TABLE qr_scans ADD COLUMN IF NOT EXISTS country TEXT`;
 
 await sql`
   CREATE INDEX IF NOT EXISTS idx_qr_scans_scanned_at
@@ -44,4 +46,9 @@ await sql`
     ON qr_scans (device_type)
 `;
 
-console.log('Neon schema ready (qr_scans + platform columns).');
+await sql`
+  CREATE INDEX IF NOT EXISTS idx_qr_scans_country
+    ON qr_scans (country)
+`;
+
+console.log('Neon schema ready (qr_scans + platform + country columns).');

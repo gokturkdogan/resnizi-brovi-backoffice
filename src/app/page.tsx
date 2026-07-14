@@ -2,118 +2,62 @@
 
 import { useCallback, useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { useLocale } from '@/components/i18n/LocaleProvider';
+import { AppMenu } from '@/components/layout/AppMenu';
+import { DonutChart } from '@/components/dashboard/DonutChart';
+import { toChartItems } from '@/components/dashboard/chart-utils';
+import { TrendChart } from '@/components/dashboard/TrendChart';
+import type { PlatformBreakdown, ScanStats, TrendPoint } from '@/lib/scan-store';
+import { RANGE_IDS, type StatsRange } from '@/lib/stats-range';
 
-function deviceLabel(name: string): string {
-  const labels: Record<string, string> = {
-    mobile: 'Мобильный',
-    tablet: 'Планшет',
-    desktop: 'Десктоп',
-    unknown: 'Неизвестно',
-  };
-  return labels[name] ?? name;
-}
+type DashboardStats = ScanStats & {
+  updatedAt: string;
+};
 
-function BreakdownList({
-  title,
-  items,
-  total,
-}: {
-  title: string;
-  items: Array<{ name: string; count: number }>;
-  total: number;
-}) {
-  if (items.length === 0) {
-    return (
-      <div>
-        <p className="mb-2 text-[10px] font-semibold uppercase tracking-[0.14em] text-[var(--muted)]">
-          {title}
-        </p>
-        <p className="text-sm text-[var(--muted)]">Нет данных</p>
-      </div>
-    );
-  }
-
+function DashboardSkeleton() {
   return (
-    <div>
-      <p className="mb-2 text-[10px] font-semibold uppercase tracking-[0.14em] text-[var(--muted)]">
-        {title}
-      </p>
-      <ul className="space-y-2">
-        {items.map((item) => {
-          const pct = total > 0 ? Math.round((item.count / total) * 100) : 0;
-          const label = title === 'Устройства' ? deviceLabel(item.name) : item.name;
-
-          return (
-            <li key={item.name}>
-              <div className="mb-1 flex items-baseline justify-between gap-3 text-sm">
-                <span>{label}</span>
-                <span className="tabular-nums text-[var(--muted)]">
-                  {item.count}
-                  <span className="ml-1 text-xs">({pct}%)</span>
-                </span>
-              </div>
-              <div className="h-1.5 bg-[var(--line)]">
-                <div
-                  className="h-full bg-black"
-                  style={{ width: `${pct}%` }}
-                />
-              </div>
-            </li>
-          );
-        })}
-      </ul>
+    <div className="animate-pulse space-y-5">
+      <div className="h-72 rounded-2xl bg-[var(--surface)] md:h-80" />
+      <div className="grid grid-cols-2 gap-2 md:gap-4 lg:grid-cols-2">
+        {Array.from({ length: 4 }).map((_, index) => (
+          <div key={index} className="h-44 rounded-xl bg-[var(--surface)] md:h-72 md:rounded-2xl" />
+        ))}
+      </div>
     </div>
   );
 }
 
-type BreakdownItem = {
-  name: string;
-  count: number;
-};
-
-type PlatformBreakdown = {
-  os: BreakdownItem[];
-  browser: BreakdownItem[];
-  device: BreakdownItem[];
-};
-
-type Stats = {
-  total: number;
-  today: number;
-  storage: 'neon' | 'memory';
-  updatedAt: string;
-  platforms: {
-    total: PlatformBreakdown;
-    today: PlatformBreakdown;
-  };
-};
-
 export default function DashboardPage() {
   const router = useRouter();
-  const [stats, setStats] = useState<Stats | null>(null);
+  const { t, locale, intlLocale } = useLocale();
+  const [range, setRange] = useState<StatsRange>('7d');
+  const [stats, setStats] = useState<DashboardStats | null>(null);
   const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState('');
 
-  const loadStats = useCallback(async () => {
-    setLoading(true);
+  const loadStats = useCallback(async (selectedRange: StatsRange, silent = false) => {
+    if (!silent) setLoading(true);
+    else setRefreshing(true);
     setError('');
 
     try {
-      const res = await fetch('/api/stats', { cache: 'no-store' });
+      const res = await fetch(`/api/stats?range=${selectedRange}`, { cache: 'no-store' });
       if (!res.ok) throw new Error('stats failed');
       setStats(await res.json());
     } catch {
-      setError('Не удалось загрузить статистику');
+      setError(t.dashboard.loadError);
     } finally {
       setLoading(false);
+      setRefreshing(false);
     }
-  }, []);
+  }, [t.dashboard.loadError]);
 
   useEffect(() => {
-    loadStats();
-    const id = window.setInterval(loadStats, 30000);
+    loadStats(range);
+    const id = window.setInterval(() => loadStats(range, true), 30000);
     return () => window.clearInterval(id);
-  }, [loadStats]);
+  }, [loadStats, range]);
 
   async function logout() {
     await fetch('/api/auth/logout', { method: 'POST' });
@@ -121,122 +65,143 @@ export default function DashboardPage() {
     router.refresh();
   }
 
+  const platforms: PlatformBreakdown | null = stats?.platforms ?? null;
+  const trend: TrendPoint[] = stats?.trend ?? [];
+  const periodCount = stats?.count ?? 0;
+
   return (
-    <div className="min-h-screen bg-white">
-      <header className="border-b border-[var(--line)] px-5 py-4">
-        <div className="mx-auto flex max-w-lg items-center justify-between gap-4">
-          <div>
-            <p className="text-[11px] font-semibold uppercase tracking-[0.28em] text-[var(--muted)]">
+    <div className="min-h-screen">
+      <header className="sticky top-0 z-20 border-b border-[var(--line)] bg-[rgba(12,8,11,0.92)] backdrop-blur-md">
+        <div className="mx-auto flex max-w-7xl items-start justify-between gap-4 px-5 py-4">
+          <div className="min-w-0 pr-2">
+            <p className="text-[10px] font-semibold uppercase tracking-[0.32em] text-[var(--accent)]">
               Beauty Space
             </p>
-            <h1 className="text-lg font-semibold tracking-tight">Dashboard</h1>
+            <h1 className="text-xl font-semibold tracking-tight text-[var(--ink)] md:text-2xl">
+              {t.dashboard.title}
+            </h1>
+            <p className="mt-1 text-sm text-[var(--muted)]">{t.dashboard.subtitle}</p>
           </div>
-          <button
-            type="button"
-            onClick={logout}
-            className="border border-[var(--line)] px-3 py-2 text-[10px] font-semibold uppercase tracking-[0.14em]"
-          >
-            Выйти
-          </button>
+
+          <div className="flex shrink-0 items-center gap-2">
+            <button
+              type="button"
+              onClick={() => loadStats(range, true)}
+              disabled={refreshing}
+              className="hidden rounded-full border border-[var(--line)] bg-[var(--surface)] px-4 py-2 text-[10px] font-semibold uppercase tracking-[0.14em] text-[var(--muted)] transition hover:border-[var(--accent)] hover:text-[var(--accent)] disabled:opacity-50 sm:inline-flex"
+            >
+              {refreshing ? t.dashboard.refreshing : t.dashboard.refresh}
+            </button>
+            <AppMenu onLogout={logout} />
+          </div>
         </div>
       </header>
 
-      <main className="mx-auto max-w-lg px-5 py-6">
-        <section className="mb-4 border border-[var(--line)] p-5">
-          <p className="mb-3 text-xs font-medium uppercase tracking-[0.16em] text-[var(--muted)]">
-            QR сканирования
-          </p>
+      <main className="relative mx-auto max-w-7xl px-5 py-6 pb-10">
+        <section className="fade-up mb-5 flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+          <div className="flex flex-wrap gap-2">
+            {RANGE_IDS.map((id) => (
+              <button
+                key={id}
+                type="button"
+                onClick={() => setRange(id)}
+                className={`rounded-full px-4 py-2 text-[10px] font-semibold uppercase tracking-[0.14em] transition duration-300 ${
+                  range === id
+                    ? 'neon-pill-active'
+                    : 'border border-[var(--line)] bg-[var(--surface)] text-[var(--muted)] hover:border-[var(--accent)] hover:text-[var(--accent)]'
+                }`}
+              >
+                {t.range[id]}
+              </button>
+            ))}
+          </div>
 
-          {loading && !stats ? (
-            <p className="text-sm text-[var(--muted)]">Загрузка…</p>
-          ) : error ? (
-            <p className="text-sm text-red-600">{error}</p>
-          ) : stats ? (
-            <div className="grid grid-cols-2 gap-3">
-              <article className="border border-[var(--line)] p-4">
-                <p className="mb-1 text-[10px] uppercase tracking-[0.14em] text-[var(--muted)]">
-                  Всего
-                </p>
-                <p className="text-3xl font-semibold tabular-nums">{stats.total}</p>
-              </article>
-              <article className="border border-[var(--line)] p-4">
-                <p className="mb-1 text-[10px] uppercase tracking-[0.14em] text-[var(--muted)]">
-                  Сегодня
-                </p>
-                <p className="text-3xl font-semibold tabular-nums">{stats.today}</p>
-              </article>
-            </div>
-          ) : null}
-
-          <button
-            type="button"
-            onClick={loadStats}
-            className="mt-4 w-full border border-black bg-black px-4 py-3 text-[11px] font-semibold uppercase tracking-[0.14em] text-white"
-          >
-            Обновить
-          </button>
-        </section>
-
-        {stats ? (
-          <section className="mb-4 space-y-4 border border-[var(--line)] p-5">
-            <p className="text-xs font-medium uppercase tracking-[0.16em] text-[var(--muted)]">
-              Платформы — всего
-            </p>
-            <div className="space-y-5">
-              <BreakdownList title="ОС" items={stats.platforms.total.os} total={stats.total} />
-              <BreakdownList
-                title="Браузеры"
-                items={stats.platforms.total.browser}
-                total={stats.total}
-              />
-              <BreakdownList
-                title="Устройства"
-                items={stats.platforms.total.device}
-                total={stats.total}
-              />
-            </div>
-          </section>
-        ) : null}
-
-        {stats && stats.today > 0 ? (
-          <section className="mb-4 space-y-4 border border-[var(--line)] p-5">
-            <p className="text-xs font-medium uppercase tracking-[0.16em] text-[var(--muted)]">
-              Платформы — сегодня
-            </p>
-            <div className="space-y-5">
-              <BreakdownList title="ОС" items={stats.platforms.today.os} total={stats.today} />
-              <BreakdownList
-                title="Браузеры"
-                items={stats.platforms.today.browser}
-                total={stats.today}
-              />
-              <BreakdownList
-                title="Устройства"
-                items={stats.platforms.today.device}
-                total={stats.today}
-              />
-            </div>
-          </section>
-        ) : null}
-
-        <section className="border border-[var(--line)] p-5 text-sm leading-relaxed text-[var(--muted)]">
-          <p className="mb-2 font-medium text-black">Как это работает</p>
-          <p className="mb-2">
-            QR-код ведёт на{' '}
-            <code className="text-xs text-black">/api/scan</code>, запись в Neon
-            Postgres, затем редирект на сайт.
-          </p>
           {stats ? (
-            <p className="text-xs">
-              Хранилище: <strong className="text-black">{stats.storage}</strong>
-              {stats.storage === 'memory'
-                ? ' (только dev — задайте DATABASE_URL и npm run db:init)'
-                : ' (Neon Postgres)'}
-              <br />
-              Обновлено: {new Date(stats.updatedAt).toLocaleString('ru-RU')}
+            <p className="text-xs text-[var(--muted)]">
+              {t.dashboard.updatedAt}:{' '}
+              <span className="text-[var(--accent)]">
+                {new Date(stats.updatedAt).toLocaleString(intlLocale)}
+              </span>
             </p>
           ) : null}
         </section>
+
+        {loading && !stats ? (
+          <DashboardSkeleton />
+        ) : error ? (
+          <div className="rounded-2xl border border-red-900/50 bg-red-950/30 p-5 text-sm text-red-300">
+            {error}
+          </div>
+        ) : stats && platforms ? (
+          <>
+            <section className="neon-card fade-up mb-4 rounded-2xl p-4 md:mb-5 md:p-5">
+              <div className="mb-3 flex flex-col gap-1 sm:flex-row sm:items-end sm:justify-between md:mb-4">
+                <div>
+                  <p className="text-[11px] font-medium uppercase tracking-[0.16em] text-[var(--muted)]">
+                    {t.dashboard.dynamics}
+                  </p>
+                  <h2 className="text-base font-semibold tracking-tight text-[var(--ink)] md:text-lg">
+                    {t.dashboard.trend} · {t.range[range]}
+                  </h2>
+                </div>
+                <p className="text-xs text-[var(--muted)] md:text-sm">
+                  {t.dashboard.peak}:{' '}
+                  <span className="font-medium text-[var(--accent)]">
+                    {Math.max(...trend.map((point) => point.count), 0)}
+                  </span>
+                </p>
+              </div>
+              <TrendChart data={trend} />
+            </section>
+
+            <section className="mb-4 grid grid-cols-2 gap-2 md:mb-5 md:gap-4 lg:grid-cols-2">
+              <DonutChart
+                title={t.charts.countries}
+                shortTitle={t.charts.countriesShort}
+                kind="country"
+                total={periodCount}
+                items={toChartItems(platforms.country, 'country', locale, 4)}
+              />
+              <DonutChart
+                title={t.charts.os}
+                shortTitle={t.charts.osShort}
+                kind="os"
+                total={periodCount}
+                items={toChartItems(platforms.os, 'os', locale, 4)}
+              />
+              <DonutChart
+                title={t.charts.browsers}
+                shortTitle={t.charts.browsersShort}
+                kind="browser"
+                total={periodCount}
+                items={toChartItems(platforms.browser, 'browser', locale, 4)}
+              />
+              <DonutChart
+                title={t.charts.devices}
+                shortTitle={t.charts.devicesShort}
+                kind="device"
+                total={periodCount}
+                items={toChartItems(platforms.device, 'device', locale, 4)}
+              />
+            </section>
+
+            <section className="neon-card fade-up rounded-2xl p-5 text-sm text-[var(--muted)]">
+              <p className="mb-2 font-medium text-[var(--ink)]">{t.dashboard.systemStatus}</p>
+              <div className="flex flex-wrap items-center gap-2 text-xs">
+                <span className="inline-flex items-center gap-1.5 rounded-full border border-[var(--line)] bg-[var(--accent-soft)] px-3 py-1.5 text-[var(--accent)]">
+                  <span className="h-1.5 w-1.5 rounded-full bg-[var(--accent)]" />
+                  {stats.storage === 'neon'
+                    ? t.dashboard.storageNeon
+                    : t.dashboard.storageMemory}
+                </span>
+                <span className="rounded-full border border-[var(--line)] px-3 py-1.5 text-[var(--muted)]">
+                  {t.dashboard.filter}: {t.range[range]}
+                </span>
+              </div>
+              <p className="mt-3 text-xs">{t.dashboard.footerNote}</p>
+            </section>
+          </>
+        ) : null}
       </main>
     </div>
   );

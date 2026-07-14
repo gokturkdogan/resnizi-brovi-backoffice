@@ -1,36 +1,87 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# resnizi-brovi-backoffice
 
-## Getting Started
+Beauty Space için ayrı repo — mobil uyumlu yönetim paneli.
 
-First, run the development server:
+Şu an: **Dashboard** → QR tarama sayısı (toplam + bugün), veriler **Neon Postgres**’te.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+## Mimari
+
+```
+QR kod  →  /api/scan  →  INSERT qr_scans  →  redirect  →  resnizi-brovi.vercel.app
+Dashboard  →  /api/stats  (COUNT sorguları, şifre korumalı)
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Her QR okutma `qr_scans` tablosuna bir satır ekler; dashboard toplam ve bugünkü sayıyı SQL ile okur.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Hızlı başlangıç
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+npm install
+cp .env.example .env.local
+# .env.local içine DATABASE_URL ekle
+npm run db:init
+npm run dev
+```
 
-## Learn More
+- Panel: http://localhost:3000  
+- Giriş: `ADMIN_PASSWORD` (varsayılan dev: `admin`)  
+- Test scan: http://localhost:3000/api/scan  
 
-To learn more about Next.js, take a look at the following resources:
+## Neon kurulumu
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+1. [console.neon.tech](https://console.neon.tech) → proje oluştur (ücretsiz tier yeterli)  
+2. **Connection string** kopyala (Vercel için **pooled** önerilir)  
+3. `.env.local` ve Vercel’e ekle:
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```
+DATABASE_URL=postgresql://...
+```
 
-## Deploy on Vercel
+4. Tabloyu oluştur:
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+```bash
+npm run db:init
+```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+5. Vercel’de redeploy  
+
+`DATABASE_URL` yoksa local’de geçici **bellek** sayacı kullanılır (prod’da kullanmayın).
+
+## Ortam değişkenleri
+
+| Değişken | Zorunlu | Açıklama |
+|----------|---------|----------|
+| `DATABASE_URL` | Evet (prod) | Neon Postgres connection string |
+| `ADMIN_PASSWORD` | Evet (prod) | Panel şifresi |
+| `SESSION_SECRET` | Evet (prod) | Oturum imzası |
+| `SITE_REDIRECT_URL` | Hayır | Scan sonrası yönlendirme |
+
+## Veritabanı şeması
+
+`db/schema.sql` — tek tablo:
+
+```sql
+qr_scans (id, scanned_at)
+```
+
+“Bugün” sayısı **Europe/Moscow** saat dilimine göre hesaplanır.
+
+## Vercel deploy
+
+1. Repo’yu GitHub’a push et  
+2. Vercel → Import → env değişkenlerini gir  
+3. Deploy sonrası `npm run db:init` (bir kez, DATABASE_URL ile) veya Neon SQL Editor’da `db/schema.sql` çalıştır  
+4. Tracker URL: `https://SENIN-BACKOFFICE.vercel.app/api/scan`
+
+## Ana site QR
+
+QR içeriği tracker URL olmalı (ana site değil). Backoffice deploy URL’in belli olunca QR’ları güncelle.
+
+## API
+
+| Endpoint | Auth | Açıklama |
+|----------|------|----------|
+| `GET /api/scan` | Hayır | `INSERT` + siteye redirect |
+| `GET /api/stats` | Evet | `{ total, today, storage }` |
+| `POST /api/auth/login` | Hayır | `{ password }` → cookie |
+| `POST /api/auth/logout` | Evet | Çıkış |

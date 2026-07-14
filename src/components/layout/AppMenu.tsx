@@ -58,7 +58,7 @@ export function AppMenu({ onLogout, health, healthUpdatedAt, storage }: AppMenuP
           />
 
           <aside
-            className={`fixed top-[75px] right-0 bottom-0 z-[110] flex w-[min(88vw,320px)] max-w-full flex-col border-l border-[var(--line)] bg-[var(--surface)] transition-transform duration-300 ease-out ${
+            className={`fixed top-[40px] right-0 bottom-0 z-[110] flex w-[min(88vw,320px)] max-w-full flex-col border-l border-[var(--line)] bg-[var(--surface)] transition-transform duration-300 ease-out ${
               open ? 'translate-x-0' : 'pointer-events-none translate-x-full'
             }`}
             aria-hidden={!open}

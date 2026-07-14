@@ -11,6 +11,7 @@ import {
   YAxis,
 } from 'recharts';
 import { useLocale } from '@/components/i18n/LocaleProvider';
+import { IconChartEmpty } from '@/components/icons/Icons';
 import type { TrendPoint } from '@/lib/scan-store';
 
 function TrendTooltip({
@@ -40,7 +41,8 @@ export function TrendChart({ data }: { data: TrendPoint[] }) {
 
   if (data.length === 0) {
     return (
-      <div className="flex h-56 items-center justify-center text-sm text-[var(--muted)] md:h-72">
+      <div className="flex h-56 flex-col items-center justify-center gap-2 text-sm text-[var(--muted)] md:h-72">
+        <IconChartEmpty size={24} className="opacity-40" />
         {t.charts.noDataPeriod}
       </div>
     );

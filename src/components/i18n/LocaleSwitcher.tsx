@@ -2,6 +2,7 @@
 
 import { useLocale } from '@/components/i18n/LocaleProvider';
 import { LocaleFlagBackdrop } from '@/components/i18n/LocaleFlagBackdrop';
+import { IconLanguages } from '@/components/icons/Icons';
 import type { Locale } from '@/lib/i18n/locale';
 
 const OPTIONS: Array<{ id: Locale; label: string }> = [
@@ -28,8 +29,9 @@ export function LocaleSwitcher({ labelAlign = 'left' }: LocaleSwitcherProps) {
   return (
     <div className="flex flex-col gap-1.5">
       <p
-        className={`text-xs font-semibold tracking-wide text-[var(--muted)] uppercase ${labelAlignClass}`}
+        className={`flex items-center gap-1.5 text-xs font-semibold tracking-wide text-[var(--muted)] uppercase ${labelAlignClass}`}
       >
+        <IconLanguages size={13} className="text-[var(--accent)]" />
         {t.menu.language}
       </p>
       <div

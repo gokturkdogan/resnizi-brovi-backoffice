@@ -2,6 +2,7 @@
 
 import { Cell, Pie, PieChart, ResponsiveContainer, Tooltip } from 'recharts';
 import { useLocale } from '@/components/i18n/LocaleProvider';
+import { chartKindIcon, IconChartEmpty } from '@/components/icons/Icons';
 import {
   formatBreakdownIcon,
   formatBreakdownLabel,
@@ -56,15 +57,18 @@ export function DonutChart({
 }) {
   const { t } = useLocale();
   const visibleItems = items.slice(0, 4);
+  const KindIcon = chartKindIcon(kind);
 
   if (items.length === 0 || total === 0) {
     return (
       <div className="neon-card rounded-xl p-3 md:rounded-2xl md:p-5">
-        <p className="mb-2 truncate text-[11px] font-medium text-[var(--muted)] md:mb-4 md:text-sm">
+        <p className="mb-2 flex items-center gap-1.5 truncate text-[11px] font-medium text-[var(--muted)] md:mb-4 md:text-sm">
+          <KindIcon size={14} className="shrink-0 text-[var(--accent)]" />
           <span className="md:hidden">{shortTitle ?? title}</span>
           <span className="hidden md:inline">{title}</span>
         </p>
-        <div className="flex h-28 items-center justify-center text-[11px] text-[var(--muted)] md:h-56 md:text-sm">
+        <div className="flex h-28 flex-col items-center justify-center gap-2 text-[11px] text-[var(--muted)] md:h-56 md:text-sm">
+          <IconChartEmpty size={22} className="opacity-40" />
           {t.charts.noData}
         </div>
       </div>
@@ -73,7 +77,8 @@ export function DonutChart({
 
   return (
     <div className="neon-card rounded-xl p-3 md:rounded-2xl md:p-5">
-      <p className="mb-2 truncate text-[11px] font-medium text-[var(--muted)] md:mb-4 md:text-sm">
+      <p className="mb-2 flex items-center gap-1.5 truncate text-[11px] font-medium text-[var(--muted)] md:mb-4 md:text-sm">
+        <KindIcon size={14} className="shrink-0 text-[var(--accent)]" />
         <span className="md:hidden">{shortTitle ?? title}</span>
         <span className="hidden md:inline">{title}</span>
       </p>

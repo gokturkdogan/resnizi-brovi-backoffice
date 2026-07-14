@@ -4,12 +4,18 @@ import { useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { useLocale } from '@/components/i18n/LocaleProvider';
 import { LocaleSwitcher } from '@/components/i18n/LocaleSwitcher';
+import { SystemHealthPanel } from '@/components/dashboard/SystemHealth';
+import { IconClose, IconLogout, IconMenu } from '@/components/icons/Icons';
+import type { SystemHealth } from '@/lib/system-health';
 
 type AppMenuProps = {
   onLogout: () => void | Promise<void>;
+  health?: SystemHealth | null;
+  healthUpdatedAt?: string | null;
+  storage?: 'neon' | 'memory';
 };
 
-export function AppMenu({ onLogout }: AppMenuProps) {
+export function AppMenu({ onLogout, health, healthUpdatedAt, storage }: AppMenuProps) {
   const { t } = useLocale();
   const [open, setOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
@@ -68,22 +74,33 @@ export function AppMenu({ onLogout }: AppMenuProps) {
                 type="button"
                 onClick={() => setOpen(false)}
                 aria-label={t.menu.close}
-                className="rounded-full border border-[var(--line)] px-3 py-1.5 text-[10px] font-semibold uppercase tracking-[0.14em] text-[var(--muted)] transition hover:text-[var(--ink)]"
+                className="inline-flex items-center gap-1.5 rounded-full border border-[var(--line)] px-3 py-1.5 text-[10px] font-semibold uppercase tracking-[0.14em] text-[var(--muted)] transition hover:text-[var(--ink)]"
               >
+                <IconClose size={12} />
                 {t.menu.close}
               </button>
             </div>
 
             <div className="flex-1 overflow-y-auto px-5 py-6">
               <LocaleSwitcher />
+
+              <div className="mt-6 border-t border-[var(--line)] pt-6">
+                <SystemHealthPanel
+                  items={health?.items ?? []}
+                  allHealthy={health?.allHealthy ?? true}
+                  updatedAt={healthUpdatedAt}
+                  storage={storage}
+                />
+              </div>
             </div>
 
             <div className="border-t border-[var(--line)] p-5 pb-[max(1.25rem,env(safe-area-inset-bottom))]">
               <button
                 type="button"
                 onClick={handleLogout}
-                className="w-full rounded-xl bg-[var(--accent)] px-4 py-3 text-[10px] font-semibold uppercase tracking-[0.16em] text-[#1a0812] transition hover:opacity-90"
+                className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-[var(--accent)] px-4 py-3 text-[10px] font-semibold uppercase tracking-[0.16em] text-[#1a0812] transition hover:opacity-90"
               >
+                <IconLogout size={14} />
                 {t.menu.logout}
               </button>
             </div>
@@ -100,13 +117,9 @@ export function AppMenu({ onLogout }: AppMenuProps) {
         aria-label={t.menu.title}
         aria-expanded={open}
         onClick={() => setOpen(true)}
-        className="relative z-30 flex h-11 w-11 items-center justify-center rounded-full border border-[var(--line)] bg-[var(--surface)] transition hover:border-[var(--accent)]"
+        className="relative z-30 flex h-11 w-11 items-center justify-center rounded-full border border-[var(--line)] bg-[var(--surface)] text-[var(--ink)] transition hover:border-[var(--accent)] hover:text-[var(--accent)]"
       >
-        <span className="flex flex-col gap-1.5">
-          <span className="block h-0.5 w-4 bg-[var(--ink)]" />
-          <span className="block h-0.5 w-4 bg-[var(--ink)]" />
-          <span className="block h-0.5 w-4 bg-[var(--ink)]" />
-        </span>
+        <IconMenu size={18} />
       </button>
       {drawer}
     </>

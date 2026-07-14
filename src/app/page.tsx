@@ -5,13 +5,17 @@ import { useRouter } from 'next/navigation';
 import { useLocale } from '@/components/i18n/LocaleProvider';
 import { AppMenu } from '@/components/layout/AppMenu';
 import { DonutChart } from '@/components/dashboard/DonutChart';
+import { SystemHealthDisplay } from '@/components/dashboard/SystemHealth';
 import { toChartItems } from '@/components/dashboard/chart-utils';
 import { TrendChart } from '@/components/dashboard/TrendChart';
+import { IconClock, IconPeak, IconQr, IconRefresh, IconTrend, IconAlert } from '@/components/icons/Icons';
 import type { PlatformBreakdown, ScanStats, TrendPoint } from '@/lib/scan-store';
+import type { SystemHealth as SystemHealthData } from '@/lib/system-health';
 import { RANGE_IDS, type StatsRange } from '@/lib/stats-range';
 
 type DashboardStats = ScanStats & {
   updatedAt: string;
+  health: SystemHealthData;
 };
 
 function DashboardSkeleton() {
@@ -74,7 +78,8 @@ export default function DashboardPage() {
       <header className="sticky top-0 z-20 border-b border-[var(--line)] bg-[rgba(12,8,11,0.92)] backdrop-blur-md">
         <div className="mx-auto flex max-w-7xl items-start justify-between gap-4 px-5 py-4">
           <div className="min-w-0 pr-2">
-            <p className="text-[10px] font-semibold uppercase tracking-[0.32em] text-[var(--accent)]">
+            <p className="flex items-center gap-2 text-[10px] font-semibold uppercase tracking-[0.32em] text-[var(--accent)]">
+              <IconQr size={14} className="text-[var(--accent)]" />
               Beauty Space
             </p>
             <h1 className="text-xl font-semibold tracking-tight text-[var(--ink)] md:text-2xl">
@@ -88,11 +93,17 @@ export default function DashboardPage() {
               type="button"
               onClick={() => loadStats(range, true)}
               disabled={refreshing}
-              className="hidden rounded-full border border-[var(--line)] bg-[var(--surface)] px-4 py-2 text-[10px] font-semibold uppercase tracking-[0.14em] text-[var(--muted)] transition hover:border-[var(--accent)] hover:text-[var(--accent)] disabled:opacity-50 sm:inline-flex"
+              className="hidden items-center gap-2 rounded-full border border-[var(--line)] bg-[var(--surface)] px-4 py-2 text-[10px] font-semibold uppercase tracking-[0.14em] text-[var(--muted)] transition hover:border-[var(--accent)] hover:text-[var(--accent)] disabled:opacity-50 sm:inline-flex"
             >
+              <IconRefresh size={13} className={refreshing ? 'animate-spin' : ''} />
               {refreshing ? t.dashboard.refreshing : t.dashboard.refresh}
             </button>
-            <AppMenu onLogout={logout} />
+            <AppMenu
+              onLogout={logout}
+              health={stats?.health ?? null}
+              healthUpdatedAt={stats?.updatedAt ?? null}
+              storage={stats?.storage}
+            />
           </div>
         </div>
       </header>
@@ -117,7 +128,8 @@ export default function DashboardPage() {
           </div>
 
           {stats ? (
-            <p className="text-xs text-[var(--muted)]">
+            <p className="inline-flex items-center gap-1.5 text-xs text-[var(--muted)]">
+              <IconClock size={13} />
               {t.dashboard.updatedAt}:{' '}
               <span className="text-[var(--accent)]">
                 {new Date(stats.updatedAt).toLocaleString(intlLocale)}
@@ -129,22 +141,25 @@ export default function DashboardPage() {
         {loading && !stats ? (
           <DashboardSkeleton />
         ) : error ? (
-          <div className="rounded-2xl border border-red-900/50 bg-red-950/30 p-5 text-sm text-red-300">
-            {error}
+          <div className="flex items-start gap-3 rounded-2xl border border-red-900/50 bg-red-950/30 p-5 text-sm text-red-300">
+            <IconAlert size={18} className="mt-0.5 shrink-0" />
+            <span>{error}</span>
           </div>
         ) : stats && platforms ? (
           <>
             <section className="neon-card fade-up mb-4 rounded-2xl p-4 md:mb-5 md:p-5">
               <div className="mb-3 flex flex-col gap-1 sm:flex-row sm:items-end sm:justify-between md:mb-4">
                 <div>
-                  <p className="text-[11px] font-medium uppercase tracking-[0.16em] text-[var(--muted)]">
+                  <p className="flex items-center gap-1.5 text-[11px] font-medium uppercase tracking-[0.16em] text-[var(--muted)]">
+                    <IconTrend size={13} className="text-[var(--accent)]" />
                     {t.dashboard.dynamics}
                   </p>
                   <h2 className="text-base font-semibold tracking-tight text-[var(--ink)] md:text-lg">
                     {t.dashboard.trend} · {t.range[range]}
                   </h2>
                 </div>
-                <p className="text-xs text-[var(--muted)] md:text-sm">
+                <p className="inline-flex items-center gap-1.5 text-xs text-[var(--muted)] md:text-sm">
+                  <IconPeak size={14} className="text-[var(--accent)]" />
                   {t.dashboard.peak}:{' '}
                   <span className="font-medium text-[var(--accent)]">
                     {Math.max(...trend.map((point) => point.count), 0)}
@@ -185,21 +200,10 @@ export default function DashboardPage() {
               />
             </section>
 
-            <section className="neon-card fade-up rounded-2xl p-5 text-sm text-[var(--muted)]">
-              <p className="mb-2 font-medium text-[var(--ink)]">{t.dashboard.systemStatus}</p>
-              <div className="flex flex-wrap items-center gap-2 text-xs">
-                <span className="inline-flex items-center gap-1.5 rounded-full border border-[var(--line)] bg-[var(--accent-soft)] px-3 py-1.5 text-[var(--accent)]">
-                  <span className="h-1.5 w-1.5 rounded-full bg-[var(--accent)]" />
-                  {stats.storage === 'neon'
-                    ? t.dashboard.storageNeon
-                    : t.dashboard.storageMemory}
-                </span>
-                <span className="rounded-full border border-[var(--line)] px-3 py-1.5 text-[var(--muted)]">
-                  {t.dashboard.filter}: {t.range[range]}
-                </span>
-              </div>
-              <p className="mt-3 text-xs">{t.dashboard.footerNote}</p>
-            </section>
+            <SystemHealthDisplay
+              items={stats.health.items}
+              allHealthy={stats.health.allHealthy}
+            />
           </>
         ) : null}
       </main>

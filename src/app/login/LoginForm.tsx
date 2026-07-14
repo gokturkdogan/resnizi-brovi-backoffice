@@ -4,6 +4,7 @@ import { FormEvent, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useLocale } from '@/components/i18n/LocaleProvider';
 import { LanguageSwitcher } from '@/components/i18n/LanguageSwitcher';
+import { IconAlert, IconLock, IconQr } from '@/components/icons/Icons';
 
 export default function LoginForm() {
   const router = useRouter();
@@ -44,7 +45,8 @@ export default function LoginForm() {
       </div>
 
       <div className="neon-card relative w-full max-w-sm rounded-2xl p-8">
-        <p className="mb-2 text-center text-[10px] font-semibold uppercase tracking-[0.32em] text-[var(--accent)]">
+        <p className="mb-2 flex items-center justify-center gap-2 text-[10px] font-semibold uppercase tracking-[0.32em] text-[var(--accent)]">
+          <IconQr size={14} />
           Beauty Space
         </p>
         <h1 className="mb-6 text-center text-2xl font-semibold tracking-tight text-[var(--ink)]">
@@ -53,7 +55,8 @@ export default function LoginForm() {
 
         <form onSubmit={onSubmit} className="space-y-4">
           <label className="block">
-            <span className="mb-2 block text-[10px] font-semibold uppercase tracking-[0.14em] text-[var(--muted)]">
+            <span className="mb-2 flex items-center gap-1.5 text-[10px] font-semibold uppercase tracking-[0.14em] text-[var(--muted)]">
+              <IconLock size={12} />
               {t.login.password}
             </span>
             <input
@@ -67,7 +70,8 @@ export default function LoginForm() {
           </label>
 
           {error ? (
-            <p className="text-sm text-red-400" role="alert">
+            <p className="flex items-center gap-2 text-sm text-red-400" role="alert">
+              <IconAlert size={14} className="shrink-0" />
               {error}
             </p>
           ) : null}

@@ -76,7 +76,7 @@ export default function DashboardPage() {
 
   return (
     <div className="min-h-screen">
-      <header className="sticky top-0 z-20 border-b border-[var(--line)] bg-[var(--header-bg)] pt-[85px] backdrop-blur-md">
+      <header className="sticky top-0 z-20 border-b border-[var(--line)] bg-[var(--header-bg)] pt-[75px] backdrop-blur-md">
         <div className="mx-auto flex max-w-7xl items-start justify-between gap-4 px-5 py-4">
           <BrandLogo
             showTitle

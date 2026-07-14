@@ -1,4 +1,4 @@
-import { SaltAdminLogo } from '@/components/icons/Icons';
+import Image from 'next/image';
 
 type BrandLogoProps = {
   size?: 'sm' | 'md' | 'lg';
@@ -8,12 +8,7 @@ type BrandLogoProps = {
   align?: 'left' | 'center';
 };
 
-const logoSizes = { sm: 22, md: 28, lg: 34 } as const;
-const boxSizes = {
-  sm: 'h-9 w-9 rounded-lg',
-  md: 'h-11 w-11 rounded-xl md:h-12 md:w-12',
-  lg: 'h-14 w-14 rounded-2xl',
-} as const;
+const imageSizes = { sm: 36, md: 48, lg: 56 } as const;
 
 export function BrandLogo({
   size = 'md',
@@ -23,16 +18,22 @@ export function BrandLogo({
   align = 'left',
 }: BrandLogoProps) {
   const centered = align === 'center';
+  const imageSize = imageSizes[size];
 
   return (
     <div
       className={`flex min-w-0 items-center gap-3 ${centered ? 'flex-col text-center' : ''}`}
     >
-      <div
-        className={`flex shrink-0 items-center justify-center border border-[var(--line)] bg-[var(--accent-soft)] ${boxSizes[size]}`}
-      >
-        <SaltAdminLogo size={logoSizes[size]} className="text-[var(--accent)]" />
-      </div>
+      <Image
+        src="/icons/icon-512.png"
+        alt=""
+        width={imageSize}
+        height={imageSize}
+        className={`shrink-0 rounded-xl shadow-sm ${
+          size === 'lg' ? 'rounded-2xl' : size === 'sm' ? 'rounded-lg' : 'rounded-xl'
+        }`}
+        priority
+      />
 
       {showTitle && title ? (
         <div className={`min-w-0 ${centered ? '' : 'flex-1'}`}>

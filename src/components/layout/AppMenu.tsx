@@ -98,7 +98,7 @@ export function AppMenu({ onLogout, health, healthUpdatedAt, storage }: AppMenuP
               <button
                 type="button"
                 onClick={handleLogout}
-                className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-[var(--accent)] px-4 py-3 text-[10px] font-semibold uppercase tracking-[0.16em] text-[#1a0812] transition hover:opacity-90"
+                className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-[var(--accent)] px-4 py-3 text-[10px] font-semibold uppercase tracking-[0.16em] text-[var(--accent-ink)] transition hover:opacity-90"
               >
                 <IconLogout size={14} />
                 {t.menu.logout}

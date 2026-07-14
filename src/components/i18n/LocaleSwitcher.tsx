@@ -40,7 +40,7 @@ export function LocaleSwitcher({ labelAlign = 'left' }: LocaleSwitcherProps) {
         aria-label={t.menu.language}
       >
         <span
-          className="pointer-events-none absolute top-1 bottom-1 rounded-full border border-[rgba(232,121,169,0.35)] bg-[var(--accent-soft)] transition-[left] duration-300 ease-out will-change-[left]"
+          className="pointer-events-none absolute top-1 bottom-1 rounded-full border border-[var(--accent-border)] bg-[var(--accent-soft)] transition-[left] duration-300 ease-out will-change-[left]"
           style={{
             left: `calc(0.25rem + ${idx} * (100% - 0.5rem) / 3)`,
             width: 'calc((100% - 0.5rem) / 3)',

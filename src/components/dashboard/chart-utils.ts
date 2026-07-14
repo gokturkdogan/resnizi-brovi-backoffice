@@ -3,14 +3,14 @@ import type { Locale } from '@/lib/i18n/locale';
 import { getMessages } from '@/lib/i18n/translations';
 
 export const CHART_COLORS = [
-  '#e879a9',
-  '#d46898',
-  '#f0a0c0',
-  '#c25584',
-  '#ffb3d0',
-  '#b86b8f',
-  '#f5c6d8',
-  '#a85a7a',
+  '#e8a0ba',
+  '#d986a8',
+  '#f0b8cc',
+  '#c98ba8',
+  '#f5d0de',
+  '#b87d9a',
+  '#f8e0ea',
+  '#a8728f',
 ];
 
 export type ChartItem = {

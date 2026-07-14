@@ -54,21 +54,21 @@ export function TrendChart({ data }: { data: TrendPoint[] }) {
         <ComposedChart data={data} margin={{ top: 8, right: 8, left: -18, bottom: 0 }}>
           <defs>
             <linearGradient id="trendFill" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stopColor="#e879a9" stopOpacity={0.15} />
-              <stop offset="100%" stopColor="#e879a9" stopOpacity={0} />
+              <stop offset="0%" stopColor="var(--accent)" stopOpacity={0.12} />
+              <stop offset="100%" stopColor="var(--accent)" stopOpacity={0} />
             </linearGradient>
           </defs>
-          <CartesianGrid stroke="rgba(255,255,255,0.05)" vertical={false} />
+          <CartesianGrid stroke="rgba(255,255,255,0.06)" vertical={false} />
           <XAxis
             dataKey="label"
-            tick={{ fill: '#9a8490', fontSize: 11 }}
+            tick={{ fill: 'var(--muted)', fontSize: 11 }}
             axisLine={false}
             tickLine={false}
             minTickGap={24}
           />
           <YAxis
             allowDecimals={false}
-            tick={{ fill: '#9a8490', fontSize: 11 }}
+            tick={{ fill: 'var(--muted)', fontSize: 11 }}
             axisLine={false}
             tickLine={false}
           />
@@ -83,10 +83,10 @@ export function TrendChart({ data }: { data: TrendPoint[] }) {
           <Line
             type="monotone"
             dataKey="count"
-            stroke="#e879a9"
+            stroke="var(--accent)"
             strokeWidth={2}
             dot={false}
-            activeDot={{ r: 4, fill: '#e879a9', strokeWidth: 0 }}
+            activeDot={{ r: 4, fill: 'var(--accent)', strokeWidth: 0 }}
             animationDuration={600}
           />
         </ComposedChart>

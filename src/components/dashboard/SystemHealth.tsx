@@ -89,7 +89,7 @@ export function SystemHealthDisplay({ items, allHealthy }: SystemHealthBaseProps
               title={itemLabel(item.id, labels)}
               className={`flex min-w-0 flex-1 items-center justify-center gap-1.5 rounded-lg border px-2 py-1.5 ${
                 isHealthy
-                  ? 'border-[var(--line)] bg-[rgba(255,255,255,0.02)]'
+                  ? 'border-[var(--line)] bg-[var(--surface-muted)]'
                   : 'border-amber-500/25 bg-amber-500/5'
               }`}
             >
@@ -156,10 +156,10 @@ export function SystemHealthPanel({
           return (
             <div
               key={item.id}
-              className="rounded-xl border border-[var(--line)] bg-[rgba(255,255,255,0.02)] p-3"
+              className="rounded-xl border border-[var(--line)] bg-[var(--surface-muted)] p-3"
             >
               <div className="flex items-start gap-3">
-                <div className="relative flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-[var(--line)] bg-[rgba(255,255,255,0.03)]">
+                <div className="relative flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-[var(--line)] bg-[var(--surface-muted)]">
                   <ItemIcon size={15} className="text-[var(--accent)]" />
                   <HealthDot
                     status={item.status}
@@ -196,11 +196,6 @@ export function SystemHealthPanel({
                     >
                       {statusLine(item, t)}
                     </span>
-                    {item.checked && item.latencyMs !== undefined ? (
-                      <span>
-                        {t.health.responseTime}: {item.latencyMs}ms
-                      </span>
-                    ) : null}
                     {showStorage ? (
                       <span>
                         {t.health.storageLabel}:{' '}
@@ -215,7 +210,7 @@ export function SystemHealthPanel({
         })}
       </div>
 
-      <div className="rounded-xl border border-[var(--line)] bg-[rgba(255,255,255,0.02)] px-3 py-2.5 text-[10px] leading-relaxed text-[var(--muted)]">
+      <div className="rounded-xl border border-[var(--line)] bg-[var(--surface-muted)] px-3 py-2.5 text-[10px] leading-relaxed text-[var(--muted)]">
         {updatedAt ? (
           <p className="mb-1 text-[var(--ink)]">
             {t.health.lastCheck}:{' '}

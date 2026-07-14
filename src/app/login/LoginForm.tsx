@@ -81,7 +81,7 @@ export default function LoginForm() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full rounded-xl bg-[var(--accent)] px-4 py-3 text-[10px] font-semibold uppercase tracking-[0.16em] text-[#1a0812] transition hover:opacity-90 disabled:opacity-60"
+            className="w-full rounded-xl bg-[var(--accent)] px-4 py-3 text-[10px] font-semibold uppercase tracking-[0.16em] text-[var(--accent-ink)] transition hover:opacity-90 disabled:opacity-60"
           >
             {loading ? t.login.loading : t.login.submit}
           </button>
